@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعادة تعيين كلمة المرور</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #8c53fb; /* الخلفية الأرجوانية */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #8c53fb;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #8c53fb;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #7a46d3;
+        }
+
+        .message {
+            display: none;
+            margin-top: 20px;
+            color: green;
+        }
+
+        .error {
+            display: none;
+            margin-top: 20px;
+            color: red;
+        }
+
+        /* زر لدي حساب */
+        .account-button {
+            margin-top: 10px;
+            background-color: #ff9800;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: block;
+            font-size: 16px;
+        }
+
+        .account-button:hover {
+            background-color: #e68900;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>إعادة تعيين كلمة المرور</h2>
+        <form id="resetForm">
+            <input type="email" id="email" placeholder="أدخل بريدك الإلكتروني" required>
+
+            <button type="submit">إرسال رابط إعادة التعيين</button>
+        </form>
+
+        <div class="message" id="successMessage">
+            تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.
+        </div>
+
+        <div class="error" id="errorMessage">
+            حدث خطأ. يرجى المحاولة مرة أخرى.
+        </div>
+
+        <!-- زر العودة إلى تسجيل الدخول -->
+        <a href="login.html" class="account-button">لدي حساب؟ تسجيل الدخول</a>
+    </div>
+
+    <!-- Firebase Libraries -->
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4fZuImi9a2_ClJnWM_LGiSHdITSaJ4Q0",
+            authDomain: "login-f5c50.firebaseapp.com",
+            projectId: "login-f5c50",
+            storageBucket: "login-f5c50.appspot.com",
+            messagingSenderId: "377880819730",
+            appId: "1:377880819730:web:55fc1cec2be15f7d6380cb",
+            measurementId: "G-D0ENLCZW0F"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // التعامل مع إرسال النموذج
+        const form = document.getElementById('resetForm');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+
+            try {
+                // إرسال رابط إعادة تعيين كلمة المرور
+                await sendPasswordResetEmail(auth, email);
+
+                // إظهار رسالة النجاح وإخفاء النموذج
+                successMessage.style.display = 'block';
+                errorMessage.style.display = 'none';
+                form.style.display = 'none';
+
+            } catch (error) {
+                console.error("Error resetting password:", error);
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - خصوماتي</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #8c53fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .app-name {
+            font-size: 3.5em;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #8c53fb;
+            margin-bottom: 20px;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #8c53fb;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #7a46e3;
+        }
+
+        .forgot-password {
+            display: block;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .forgot-password a {
+            color: #8c53fb;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .signup-link {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #8c53fb;
+            text-decoration: none;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- النص "خصوماتي" في الوسط -->
+    <div class="app-name">خصوماتي</div>
+
+    <!-- لوحة تسجيل الدخول -->
+    <div class="login-container">
+        <h2>تسجيل الدخول</h2>
+        <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+
+        <!-- حقل كلمة المرور مع أيقونة العين -->
+        <div class="password-container">
+            <input type="password" id="password" placeholder="كلمة المرور" required>
+            <span class="toggle-password" onclick="togglePassword()">
+                👁️
+            </span>
+        </div>
+
+        <button onclick="login()">تسجيل الدخول</button>
+
+        <div class="forgot-password">
+            <a href="restart_pass.html" onclick="resetPassword()">هل نسيت كلمة المرور؟</a>
+        </div>
+
+        <div class="signup-link">
+            <p>ليس لديك حساب؟ <a href="file:///C:/Users/moame/khusumati/www/public/register.html">تسجيل جديد</a></p>
+        </div>
+
+        <div class="error-message" id="error-message"></div>
+    </div>
+
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+
+<script>
+    // إعداد Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyC4fZuImi9a2_ClJnWM_LGiSHdITSaJ4Q0",
+        authDomain: "login-f5c50.firebaseapp.com",
+        projectId: "login-f5c50",
+        storageBucket: "login-f5c50.appspot.com",
+        messagingSenderId: "377880819730",
+        appId: "1:377880819730:web:55fc1cec2be15f7d6380cb",
+        measurementId: "G-D0ENLCZW0F"
+    };
+
+    // تهيئة Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // وظيفة لتبديل إظهار/إخفاء كلمة المرور
+    function togglePassword() {
+        const passwordField = document.getElementById('password');
+        const toggleIcon = document.querySelector('.toggle-password');
+        
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            toggleIcon.textContent = "🙈"; // رمز العين المغلقة
+        } else {
+            passwordField.type = "password";
+            toggleIcon.textContent = "👁️"; // رمز العين المفتوحة
+        }
+    }
+
+    // تسجيل الدخول
+    function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorMessageDiv = document.getElementById('error-message');
+
+        // التحقق من الحقول
+        if (!email || !password) {
+            errorMessageDiv.textContent = "الرجاء إدخال البريد الإلكتروني وكلمة المرور.";
+            return;
+        }
+
+        auth.signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // نجاح تسجيل الدخول
+                window.location.href = "dashboard.html"; // توجيه إلى الصفحة الرئيسية بعد تسجيل الدخول
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+
+                // معالجة أنواع الأخطاء المختلفة
+                if (errorCode === 'auth/user-not-found') {
+                    errorMessageDiv.textContent = "البريد الإلكتروني غير مسجل.";
+                } else if (errorCode === 'auth/wrong-password') {
+                    errorMessageDiv.textContent = "كلمة المرور غير صحيحة.";
+                } else {
+                    errorMessageDiv.textContent = errorMessage;
+                }
+            });
+    }
+
+    // إعادة تعيين كلمة المرور
+    function resetPassword() {
+        const email = document.getElementById('email').value;
+        const errorMessageDiv = document.getElementById('error-message');
+        
+        if (!email) {
+            errorMessageDiv.textContent = "الرجاء إدخال بريدك الإلكتروني.";
+            return;
+        }
+
+        auth.sendPasswordResetEmail(email)
+            .then(() => {
+                alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.");
+            })
+            .catch((error) => {
+                const errorMessage = error.message;
+                errorMessageDiv.textContent = errorMessage;
+            });
+    }
+</script>
+
+</body>
+</html>
